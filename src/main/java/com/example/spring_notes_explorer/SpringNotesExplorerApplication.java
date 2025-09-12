@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class SpringNotesExplorerApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(SpringNotesExplorerApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(SpringNotesExplorerApplication.class, args);
+    }
 }
