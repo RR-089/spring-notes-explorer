@@ -31,6 +31,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteDto createNote(CreateNoteRequest request) {
+        log.info("Create new note");
+
         Folder folder =
                 this.folderRepository.findById(request.folderId()).orElseThrow(() -> new NotFoundException("Folder not found", null));
 
@@ -45,6 +47,8 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public void deleteNote(Long id) {
+        log.info("Delete note: {}", id);
+
         Note foundNote =
                 this.noteRepository.findById(id).orElseThrow(() -> new NotFoundException("Note not found", null));
 
