@@ -2,6 +2,8 @@ package com.example.spring_notes_explorer.service.impl;
 
 import com.example.spring_notes_explorer.dto.note.CreateNoteRequest;
 import com.example.spring_notes_explorer.dto.note.NoteDto;
+import com.example.spring_notes_explorer.exception.CustomException.NotFoundException;
+import com.example.spring_notes_explorer.model.Folder;
 import com.example.spring_notes_explorer.model.Note;
 import com.example.spring_notes_explorer.repository.FolderRepository;
 import com.example.spring_notes_explorer.repository.NoteRepository;
@@ -29,11 +31,23 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteDto createNote(CreateNoteRequest request) {
-        return null;
+        Folder folder =
+                this.folderRepository.findById(request.folderId()).orElseThrow(() -> new NotFoundException("Folder not found", null));
+
+        Note newNote = Note.builder()
+                           .title(request.title())
+                           .content(request.content())
+                           .folder(folder)
+                           .build();
+
+        return mapToDto(this.noteRepository.save(newNote));
     }
 
     @Override
     public void deleteNote(Long id) {
+        Note foundNote =
+                this.noteRepository.findById(id).orElseThrow(() -> new NotFoundException("Note not found", null));
 
+        this.noteRepository.delete(foundNote);
     }
 }
