@@ -2,6 +2,7 @@ package com.example.spring_notes_explorer.service.impl;
 
 import com.example.spring_notes_explorer.dto.folder.CreateFolderRequest;
 import com.example.spring_notes_explorer.dto.folder.FolderDto;
+import com.example.spring_notes_explorer.exception.CustomException.NotFoundException;
 import com.example.spring_notes_explorer.model.Folder;
 import com.example.spring_notes_explorer.repository.FolderRepository;
 import com.example.spring_notes_explorer.service.FolderService;
@@ -28,16 +29,31 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public FolderDto createFolder(CreateFolderRequest request) {
-        return null;
+        log.info("Create new folder: {}", request.name());
+
+        Folder parentFolder = request.parentId() != null ?
+                this.folderRepository.findById(request.parentId()).orElseThrow(() -> new NotFoundException("Parent folder not found", null)) :
+                null;
+
+        Folder newFolder = Folder.builder()
+                                 .name(request.name())
+                                 .parent(parentFolder)
+                                 .build();
+
+        return mapToDto(this.folderRepository.save(newFolder));
     }
 
     @Override
     public FolderDto getFolder(Long id) {
-        return null;
+        log.info("Get folder id: {}", id);
+        return mapToDto(this.folderRepository.findById(id).orElseThrow(() -> new NotFoundException("Folder not found", null)));
     }
 
     @Override
     public void deleteFolder(Long id) {
+        Folder foundFolder =
+                this.folderRepository.findById(id).orElseThrow(() -> new NotFoundException("Folder not found", null));
 
+        this.folderRepository.delete(foundFolder);
     }
 }
